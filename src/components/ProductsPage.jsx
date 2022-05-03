@@ -2,6 +2,8 @@ import { gql, useQuery } from "@apollo/client";
 import { Page, Layout, Banner, Card } from "@shopify/polaris";
 import { Loading } from "@shopify/app-bridge-react";
 import { ProductsList } from "./ProductsList";
+import { ApplyRandomPrices } from "./ApplyRandomPrices";
+
 const GET_PRODUCTS_BY_ID = gql`
   query getProducts($ids: [ID!]!) {
     nodes(ids: $ids) {
@@ -36,12 +38,14 @@ export function ProductsPage({ productIds }) {
     variables: { ids: productIds },
   });
   if (loading) return <Loading />;
+
   if (error) {
     console.warn(error);
     return (
       <Banner status="critical">There was an issue loading products.</Banner>
     );
   }
+
   return (
     <Page>
       <Layout>
@@ -49,6 +53,7 @@ export function ProductsPage({ productIds }) {
           <Card>
             <ProductsList data={data} />
           </Card>
+          <ApplyRandomPrices selectedItems={data.nodes} onUpdate={refetch} />
         </Layout.Section>
       </Layout>
     </Page>
